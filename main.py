@@ -4,7 +4,7 @@ from pathlib import Path
 from uuid import uuid4
 
 from services.ocr import extract_text_from_image, extract_text_from_pdf
-
+from services.text_cleaner import clean_ocr_text
 
 # Folders where uploaded files will be stored:
 
@@ -70,6 +70,9 @@ async def upload_document(file: UploadFile = File(...)):
 
     elif file.content_type == "application/pdf":
         extracted_text = extract_text_from_pdf(stored_path)
+
+    if extracted_text:
+        extracted_text = clean_ocr_text(extracted_text)
 
     # Send response
     return {
