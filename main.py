@@ -5,6 +5,7 @@ from uuid import uuid4
 
 from services.ocr import extract_text_from_image, extract_text_from_pdf
 from services.text_cleaner import clean_ocr_text
+from services.document import create_document_data
 
 # Folders where uploaded files will be stored:
 
@@ -75,13 +76,22 @@ async def upload_document(file: UploadFile = File(...)):
         extracted_text = clean_ocr_text(extracted_text)
 
     # Send response
+
+    document_data = create_document_data(
+        filename= file.filename,
+        content_type= file.content_type,
+        extracted_text= extracted_text
+    )
+
     return {
+
         "message": "FILE uploaded successfully",
-        "orginal_filename": file.filename,
         "stored_filename": stored_filename,
-        "content_type": file.content_type,
         "size": len(contents),
+        "document": document_data
+        # "original_filename": file.filename,
+        # "content_type": file.content_type,
         # "filename": file.filename,
         # "content_type": file.content_type,
-        "extracted_text": extracted_text
+        # "extracted_text": extracted_text
     }
